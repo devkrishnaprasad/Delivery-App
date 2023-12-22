@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -82,7 +80,7 @@ class _SingleItemCardStateState extends State<SingleItemCardState> {
                                 ),
                                 Obx(() {
                                   return Text(
-                                    '${itemCount.value.toString()}',
+                                    itemCount.value.toString(),
                                     style: const TextStyle(color: Colors.white),
                                   );
                                 }),
@@ -108,7 +106,7 @@ class _SingleItemCardStateState extends State<SingleItemCardState> {
                               itemCount.value = 1;
                             },
                             style: TextButton.styleFrom(
-                              primary: Colors.green,
+                              foregroundColor: Colors.green,
                               backgroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 25, vertical: 5),
