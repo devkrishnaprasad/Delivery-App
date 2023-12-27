@@ -1,11 +1,8 @@
+import 'package:delivery_app/menu_page/menu_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
-RxBool isItemAdded = false.obs;
-RxInt itemCount = 0.obs;
-bool isNoVeg = true;
 
 class MenuItemCard extends StatefulWidget {
   const MenuItemCard({super.key});
@@ -14,7 +11,12 @@ class MenuItemCard extends StatefulWidget {
   State<MenuItemCard> createState() => _MenuItemCardState();
 }
 
+MainMenuController _menuController = Get.find();
+
 class _MenuItemCardState extends State<MenuItemCard> {
+  RxBool isItemAdded = false.obs;
+
+  bool isNoVeg = true;
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -137,7 +139,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
                                 child: InkWell(
                                   onTap: () {
                                     isItemAdded.value = true;
-                                    itemCount.value = 1;
+                                    _menuController.cartItemCount.value = 1;
                                   },
                                   child: Container(
                                     width: 100.w,
@@ -156,10 +158,18 @@ class _MenuItemCardState extends State<MenuItemCard> {
                                         children: [
                                           IconButton(
                                             onPressed: () {
-                                              if (itemCount.value == 1) {
+                                              if (_menuController
+                                                      .cartItemCount.value ==
+                                                  0) {
                                                 isItemAdded.value = false;
                                               } else {
-                                                itemCount.value -= 1;
+                                                _menuController
+                                                    .cartItemCount.value -= 1;
+                                                _menuController.cartItemCount
+                                                            .value ==
+                                                        0
+                                                    ? isItemAdded.value = false
+                                                    : isItemAdded.value = true;
                                               }
                                             },
                                             icon: const Icon(
@@ -171,7 +181,9 @@ class _MenuItemCardState extends State<MenuItemCard> {
                                           Obx(
                                             () {
                                               return Text(
-                                                itemCount.value.toString(),
+                                                _menuController
+                                                    .cartItemCount.value
+                                                    .toString(),
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.bold,
@@ -182,7 +194,8 @@ class _MenuItemCardState extends State<MenuItemCard> {
                                           ),
                                           IconButton(
                                             onPressed: () {
-                                              itemCount.value += 1;
+                                              _menuController
+                                                  .cartItemCount.value += 1;
                                             },
                                             icon: const Icon(
                                               Icons.add,
@@ -201,28 +214,29 @@ class _MenuItemCardState extends State<MenuItemCard> {
                                 child: InkWell(
                                   onTap: () {
                                     isItemAdded.value = true;
-                                    itemCount.value = 1;
+                                    _menuController.cartItemCount.value = 1;
                                   },
                                   child: Container(
-                                      width: 100.w,
-                                      height: 25.h,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: Colors.green,
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            'Add',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 10.sp),
-                                          ),
-                                        ],
-                                      )),
+                                    width: 100.w,
+                                    height: 25.h,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: Colors.green,
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Add',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10.sp),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               );
                       },
