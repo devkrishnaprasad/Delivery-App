@@ -1,3 +1,5 @@
+import 'package:delivery_app/cart/cart.dart';
+import 'package:delivery_app/menu_page/menu_controller.dart';
 import 'package:delivery_app/menu_page/widgets/cards/menu_item_cards.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,6 +11,8 @@ class MenuItems extends StatefulWidget {
   @override
   State<MenuItems> createState() => _MenuItemsState();
 }
+
+MainMenuController _mainMenuController = Get.put(MainMenuController());
 
 class _MenuItemsState extends State<MenuItems> {
   @override
@@ -54,6 +58,89 @@ class _MenuItemsState extends State<MenuItems> {
           )
         ],
       ),
+      bottomNavigationBar: Obx(() {
+        return Visibility(
+          visible: _mainMenuController.cartItemCount.value != 0,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(0.h, 0.w, 0.h, 18.w),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(
+                    0.0), // Set the alpha channel to 0.0 for transparency
+              ),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(0.h, 0.w, 0.h, 0.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Get.to(Cart());
+                      },
+                      child: Container(
+                        width: 150.w,
+                        height: 40.h,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.green,
+                        ),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(10.h, 0, 0, 0),
+                              child: ImageIcon(
+                                AssetImage('assets/icons/cart.png'),
+                                size: 25.0.dg,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(15.h, 0, 0, 0),
+                              child: Text(
+                                _mainMenuController.cartItemCount.value
+                                    .toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15.sp,
+                                  fontFamily: 'ch',
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(5.h, 0, 0, 0),
+                              child: Text(
+                                _mainMenuController.cartItemCount.value == 1
+                                    ? 'Item'
+                                    : 'Items',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15.sp,
+                                  fontFamily: 'ch',
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(2.h, 0, 0, 0),
+                              child: ImageIcon(
+                                const AssetImage(
+                                    'assets/icons/forward_icon.png'),
+                                color: Colors.white,
+                                size: 18.dg,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      }),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -142,7 +229,7 @@ class _MenuItemsState extends State<MenuItems> {
               ),
             ),
             ListView.builder(
-              itemCount: 10,
+              itemCount: 5,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
