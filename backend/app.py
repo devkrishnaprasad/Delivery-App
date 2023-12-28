@@ -10,7 +10,6 @@ load_dotenv()
 app = Flask(__name__)
 operations_obj = DBOperations()
 
-
 def generate_uuid():
     return str(uuid.uuid4())
 
@@ -49,8 +48,8 @@ def get_filtered_user_data():
 @app.route('/add_users', methods=['POST'])
 def add_users():
     data = request.form
-    full_name, email, phone_number = data.get("full_name"), data.get("email"), data.get("phone_number")
-    return handle_add_request(data, operations_obj.add_users, full_name, email, phone_number)
+    full_name, email, phone_number, date_of_birth, gender = data.get("full_name"), data.get("email"), data.get("phone_number"),data.get("date_of_birth"), data.get("gender")
+    return handle_add_request(data, operations_obj.add_users, full_name, email, phone_number,date_of_birth,gender)
 
 @app.route('/get_restaurant_details/all', methods=['POST'])
 def get_restaurant_data():

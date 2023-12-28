@@ -4,8 +4,22 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+// ignore: must_be_immutable
 class MenuItemCard extends StatefulWidget {
-  const MenuItemCard({super.key});
+  final String itemname;
+  final double rating;
+  final String itemPrice;
+  bool isVeg;
+  final String imageUrl;
+
+  MenuItemCard({
+    Key? key,
+    required this.itemname,
+    required this.rating,
+    required this.itemPrice,
+    required this.isVeg,
+    required this.imageUrl,
+  }) : super(key: key);
 
   @override
   State<MenuItemCard> createState() => _MenuItemCardState();
@@ -54,9 +68,9 @@ class _MenuItemCardState extends State<MenuItemCard> {
                 ),
                 Padding(
                   padding: EdgeInsets.fromLTRB(10.w, 0.h, 0.w, 0.h),
-                  child: const Text(
-                    'Meghana Special Biryani',
-                    style: TextStyle(
+                  child: Text(
+                    widget.itemname,
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
@@ -69,7 +83,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
                   child: Row(
                     children: [
                       RatingBar.builder(
-                        initialRating: 3,
+                        initialRating: widget.rating,
                         minRating: 1,
                         direction: Axis.horizontal,
                         allowHalfRating: true,
@@ -100,9 +114,9 @@ class _MenuItemCardState extends State<MenuItemCard> {
                 ),
                 Padding(
                   padding: EdgeInsets.fromLTRB(12.h, 14.w, 0.h, 0.w),
-                  child: const Text(
-                    '₹259',
-                    style: TextStyle(
+                  child: Text(
+                    '₹${widget.itemPrice}',
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
@@ -124,8 +138,8 @@ class _MenuItemCardState extends State<MenuItemCard> {
                         height: 100.h,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
-                          image: const DecorationImage(
-                            image: AssetImage('assets/images/dish_img_1.jpg'),
+                          image: DecorationImage(
+                            image: NetworkImage(widget.imageUrl),
                             fit: BoxFit.cover,
                           ),
                         ),

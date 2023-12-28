@@ -1,9 +1,11 @@
 import 'package:delivery_app/cart/cart.dart';
+import 'package:delivery_app/home/controller/home_controller.dart';
 import 'package:delivery_app/menu_page/menu_controller.dart';
 import 'package:delivery_app/menu_page/widgets/cards/menu_item_cards.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class MenuItems extends StatefulWidget {
   const MenuItems({Key? key}) : super(key: key);
@@ -13,6 +15,7 @@ class MenuItems extends StatefulWidget {
 }
 
 MainMenuController _mainMenuController = Get.put(MainMenuController());
+HomeController _homeController = Get.find();
 
 class _MenuItemsState extends State<MenuItems> {
   @override
@@ -228,14 +231,34 @@ class _MenuItemsState extends State<MenuItems> {
                 ),
               ),
             ),
-            ListView.builder(
-              itemCount: 5,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                return MenuItemCard();
-              },
-            ),
+            Obx(() {
+              return _homeController.isloading.value
+                  ? Center(
+                      child: LoadingAnimationWidget.twistingDots(
+                        leftDotColor: const Color(0xFF1A1A3F),
+                        rightDotColor: const Color(0xFFEA3799),
+                        size: 200,
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: _homeController.menuListrecords.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return MenuItemCard(
+                          itemname:
+                              _homeController.menuListrecords[index].itemName,
+                          rating: double.parse(_homeController
+                              .menuListrecords[index].itemRating),
+                          itemPrice:
+                              _homeController.menuListrecords[index].itemPrice,
+                          isVeg: _homeController.menuListrecords[index].veg,
+                          imageUrl:
+                              _homeController.menuListrecords[index].imageUrl,
+                        );
+                      },
+                    );
+            })
           ],
         ),
       ),

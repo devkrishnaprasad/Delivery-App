@@ -12,7 +12,7 @@ class ApiProvider {
     try {
       final response = await dio
           .post('${_appConstansConfiguration.API_URL}$url', data: body);
-      return response;
+      return response.data;
     } catch (error) {
       print('Error in apiManager: $error');
       throw error;

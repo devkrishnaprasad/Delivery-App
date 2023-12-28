@@ -36,8 +36,8 @@ initialSetup() async {
   print("initialSetup Called.....");
   HomeController _homeController = Get.put(HomeController());
   LocalStorage _localStorage = LocalStorage();
-  await _localStorage.write('user_id', '5f7e1153-56ca-4b4d-9afc-5b003b3546e6');
+  await _localStorage.write('user_id', '23a1bcc0-e849-46d1-b67b-ac076e7ef6cb');
   var userId = await _localStorage.read('user_id');
-  await _homeController.getUserDetails(userId);
+  // await _homeController.getUserDetails(userId);
   await _homeController.getAllRestaurantDetails();
 }
