@@ -1,7 +1,9 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'package:delivery_app/home/controller/home_controller.dart';
 import 'package:delivery_app/home/home.dart';
-import 'package:delivery_app/splash_screen/screen_1.dart';
-import 'package:delivery_app/splash_screen/screen_2.dart';
+// import 'package:delivery_app/splash_screen/screen_1.dart';
+// import 'package:delivery_app/splash_screen/screen_2.dart';
 import 'package:delivery_app/utils/local_storage/local_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -33,11 +35,10 @@ class MyApp extends StatelessWidget {
 }
 
 initialSetup() async {
-  print("initialSetup Called.....");
   HomeController _homeController = Get.put(HomeController());
   LocalStorage _localStorage = LocalStorage();
-  await _localStorage.write('user_id', '23a1bcc0-e849-46d1-b67b-ac076e7ef6cb');
+  await _localStorage.write('user_id', '3ec4e406-08f8-4995-a662-9e7aa412c961');
   var userId = await _localStorage.read('user_id');
-  // await _homeController.getUserDetails(userId);
+  await _homeController.getUserDetails(userId);
   await _homeController.getAllRestaurantDetails();
 }

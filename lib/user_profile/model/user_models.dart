@@ -1,17 +1,21 @@
+// To parse this JSON data, do
+//
+//     final userData = userDataFromJson(jsonString);
+
 import 'dart:convert';
 
-UsersData UsersDataFromJson(String str) => UsersData.fromJson(json.decode(str));
+UserData userDataFromJson(String str) => UserData.fromJson(json.decode(str));
 
-String UsersDataToJson(UsersData data) => json.encode(data.toJson());
+String userDataToJson(UserData data) => json.encode(data.toJson());
 
-class UsersData {
+class UserData {
   Response response;
 
-  UsersData({
+  UserData({
     required this.response,
   });
 
-  factory UsersData.fromJson(Map<String, dynamic> json) => UsersData(
+  factory UserData.fromJson(Map<String, dynamic> json) => UserData(
         response: Response.fromJson(json["response"]),
       );
 
@@ -22,7 +26,7 @@ class UsersData {
 
 class Response {
   String msg;
-  List<UsersRecord> records;
+  List<UserRecord> records;
   bool status;
 
   Response({
@@ -33,8 +37,8 @@ class Response {
 
   factory Response.fromJson(Map<String, dynamic> json) => Response(
         msg: json["msg"],
-        records: List<UsersRecord>.from(
-            json["records"].map((x) => UsersRecord.fromJson(x))),
+        records: List<UserRecord>.from(
+            json["records"].map((x) => UserRecord.fromJson(x))),
         status: json["status"],
       );
 
@@ -45,33 +49,41 @@ class Response {
       };
 }
 
-class UsersRecord {
+class UserRecord {
+  String dateOfBirth;
   String email;
   String fullName;
-  String imageUrl;
+  String gender;
+  String? imageUrl; // Make imageUrl nullable by adding '?'
   String phoneNumber;
   String userId;
 
-  UsersRecord({
+  UserRecord({
+    required this.dateOfBirth,
     required this.email,
     required this.fullName,
-    required this.imageUrl,
+    required this.gender,
+    this.imageUrl, // Update imageUrl to be nullable
     required this.phoneNumber,
     required this.userId,
   });
 
-  factory UsersRecord.fromJson(Map<String, dynamic> json) => UsersRecord(
+  factory UserRecord.fromJson(Map<String, dynamic> json) => UserRecord(
+        dateOfBirth: json["date_of_birth"],
         email: json["email"],
         fullName: json["full_name"],
+        gender: json["gender"],
         imageUrl: json["image_url"],
         phoneNumber: json["phone_number"],
         userId: json["user_id"],
       );
 
   Map<String, dynamic> toJson() => {
+        "date_of_birth": dateOfBirth,
         "email": email,
         "full_name": fullName,
-        "image_url": imageUrl,
+        "gender": gender,
+        "image_url": imageUrl, // Update imageUrl to be nullable
         "phone_number": phoneNumber,
         "user_id": userId,
       };

@@ -1,7 +1,7 @@
 import 'package:delivery_app/home/model/all_restaurant_model.dart';
 import 'package:delivery_app/home/model/menu_item_model.dart';
 import 'package:delivery_app/utils/services/api/api_provider.dart';
-import 'package:delivery_app/utils/services/models/user_models.dart';
+import 'package:delivery_app/user_profile/model/user_models.dart';
 import 'package:get/get.dart';
 
 class ResturantApiService extends GetxController {
@@ -20,7 +20,6 @@ class ResturantApiService extends GetxController {
       if (restaurantList.isNotEmpty) {
         return allRestaurantList;
       }
-      print("API Response $response");
     } catch (error) {
       print('Error in getAllResturant: $error');
       return [];
@@ -28,23 +27,21 @@ class ResturantApiService extends GetxController {
     return [];
   }
 
-  Future<List<UsersRecord>> getUserDetails(userId) async {
-    // ignore: unused_local_variable
-    List<UsersRecord> userDetailsList;
+  Future<List<UserRecord>> getUserDetails(userId) async {
+    List<UserRecord> userDetailsList;
     try {
       var body = {"user_id": userId};
       var response =
           await _apiProvider.apiManager("/get_user_details/filtered", body);
       var usersDetails = response['response']['records'];
-      userDetailsList = usersDetails
-          .map<UsersRecord>((p) => UsersRecord.fromJson(p))
-          .toList();
-      if (usersDetails.isNotEmpty) {
-        return usersDetails;
+      userDetailsList =
+          usersDetails.map<UserRecord>((p) => UserRecord.fromJson(p)).toList();
+      if (userDetailsList.isNotEmpty) {
+        return userDetailsList;
       }
     } catch (error) {
       print('Error in getUserDetails: $error');
-      return [];
+      return []; // or throw an exception based on your error handling strategy
     }
     return [];
   }

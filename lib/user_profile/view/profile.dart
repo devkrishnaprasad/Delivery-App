@@ -1,6 +1,12 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:delivery_app/home/controller/home_controller.dart';
+import 'package:delivery_app/user_profile/controller/api/user_api.dart';
+import 'package:delivery_app/utils/local_storage/local_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UserProfile extends StatefulWidget {
   const UserProfile({super.key});
@@ -10,25 +16,30 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _phoneNumberController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
+  final HomeController _homeController = Get.find();
+  final UserApiService _userApiService = Get.put(UserApiService());
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
 
-  TextEditingController _dateOfBirthController = TextEditingController();
+  final TextEditingController _dateOfBirthController = TextEditingController();
   String? dropDownValue;
   //DOB and Genter
 
-  List<String> cityList = ['Male', 'Female', 'Others'];
+  List<String> genderList = ['Male', 'Female', 'Others'];
+  var gender;
+  String? fileName;
   RxBool isUpdates = false.obs;
+  RxBool isLoding = false.obs;
   Map<TextEditingController, String> initialFieldValues = {};
 
   void initState() {
     super.initState();
-    _nameController.text = 'Krishna prasad R';
-    _emailController.text = 'krishna.official.r@gmail.com';
-    _phoneNumberController.text = '9539873221';
-    _dateOfBirthController.text = '16/09/1998';
-
+    _nameController.text = _homeController.usersDetails[0].fullName;
+    _emailController.text = _homeController.usersDetails[0].email;
+    _phoneNumberController.text = _homeController.usersDetails[0].phoneNumber;
+    _dateOfBirthController.text = _homeController.usersDetails[0].dateOfBirth;
+    gender = _homeController.usersDetails[0].gender;
     _nameController.addListener(onFieldChanged);
     _phoneNumberController.addListener(onFieldChanged);
     _emailController.addListener(onFieldChanged);
@@ -48,14 +59,13 @@ class _UserProfileState extends State<UserProfile> {
     });
   }
 
+  Uint8List? _image;
+  File? selectedIMage;
+
   @override
   Widget build(BuildContext context) {
-    _nameController.text = 'Krishna prasad R';
-    _emailController.text = 'krishna.official.r@gmail.com';
-    _phoneNumberController.text = '9539873221';
-    _dateOfBirthController.text = '16/09/1998';
-
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         leading: Row(
           children: [
@@ -93,16 +103,30 @@ class _UserProfileState extends State<UserProfile> {
                       radius: 60.w,
                       backgroundColor: Colors.transparent,
                       child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/My_profile.jpeg',
-                        ),
+                        child: _image != null
+                            ? CircleAvatar(
+                                radius: 100,
+                                backgroundImage: MemoryImage(_image!))
+                            : _homeController.usersDetails[0].imageUrl == null
+                                ? const CircleAvatar(
+                                    radius: 100,
+                                    backgroundImage: NetworkImage(
+                                        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"),
+                                  )
+                                : CircleAvatar(
+                                    radius: 100,
+                                    backgroundImage: NetworkImage(
+                                        _homeController
+                                            .usersDetails[0].imageUrl!),
+                                  ),
                       ),
                     ),
                     Positioned(
                       bottom: 0,
                       child: GestureDetector(
-                        onTap: () {
-                          print("Edit button is pressed..");
+                        onTap: () async {
+                          isUpdates.value = true;
+                          await _pickImageFromGallery();
                         },
                         child: Container(
                           padding: EdgeInsets.all(4.w),
@@ -334,12 +358,13 @@ class _UserProfileState extends State<UserProfile> {
                       hintStyle: TextStyle(color: Colors.grey),
                       fillColor: Colors.white,
                     ),
-                    value: 'Male',
-                    items: cityList
+                    value: _homeController.usersDetails[0].gender,
+                    items: genderList
                         .map((cityTitle) => DropdownMenuItem(
                             value: cityTitle, child: Text("$cityTitle")))
                         .toList(),
                     onChanged: (String? value) {
+                      gender = value;
                       print(value);
                     },
                   )),
@@ -349,41 +374,81 @@ class _UserProfileState extends State<UserProfile> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: EdgeInsets.fromLTRB(0.h, 40.w, 0.h, 40.w),
-                child: ElevatedButton(
-                  onPressed: isUpdates.value
-                      ? () {
-                          debugPrint('Update button pressed..');
-                        }
-                      : null,
-                  style: ButtonStyle(
-                    backgroundColor: isUpdates.value
-                        ? MaterialStateProperty.all<Color>(Colors.green)
-                        : MaterialStateProperty.all<Color>(Colors.grey),
-                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                      EdgeInsets.symmetric(
-                          horizontal: 140.0.w, vertical: 10.0.h),
-                    ),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                    ),
-                  ),
-                  child: Text(
-                    'Update',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              )
+                  padding: EdgeInsets.fromLTRB(0.h, 40.w, 0.h, 40.w),
+                  child: Obx(() {
+                    return isLoding.value
+                        ? CircularProgressIndicator()
+                        : ElevatedButton(
+                            onPressed: isUpdates.value
+                                ? () async {
+                                    isLoding.value = true;
+                                    await _userApiService.updateUserDetails(
+                                        selectedIMage != null
+                                            ? selectedIMage!.path
+                                            : "default",
+                                        fileName,
+                                        _nameController.text,
+                                        _emailController.text,
+                                        _phoneNumberController.text,
+                                        _dateOfBirthController.text,
+                                        gender,
+                                        _homeController
+                                                .usersDetails[0].imageUrl ??
+                                            "");
+                                    LocalStorage _localStorage = LocalStorage();
+                                    var userId =
+                                        await _localStorage.read('user_id');
+                                    await _homeController
+                                        .getUserDetails(userId);
+                                    isLoding.value = false;
+                                    isUpdates.value = false;
+                                    debugPrint('Update button pressed..');
+                                  }
+                                : null,
+                            style: ButtonStyle(
+                              backgroundColor: isUpdates.value
+                                  ? MaterialStateProperty.all<Color>(
+                                      Colors.green)
+                                  : MaterialStateProperty.all<Color>(
+                                      Colors.grey),
+                              padding:
+                                  MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                EdgeInsets.symmetric(
+                                    horizontal: 140.0.w, vertical: 10.0.h),
+                              ),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              'Update',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+                  }))
             ],
           )
         ],
       ),
     );
+  }
+
+  Future _pickImageFromGallery() async {
+    final returnImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (returnImage == null) return;
+    setState(() {
+      selectedIMage = File(returnImage.path);
+      _image = File(returnImage.path).readAsBytesSync();
+
+      fileName = returnImage.path.split('/').last;
+    });
   }
 }

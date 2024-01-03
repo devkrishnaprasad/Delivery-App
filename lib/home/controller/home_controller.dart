@@ -1,14 +1,14 @@
 import 'package:delivery_app/home/controller/api/restaurant_api.dart';
 import 'package:delivery_app/home/model/all_restaurant_model.dart';
 import 'package:delivery_app/home/model/menu_item_model.dart';
-import 'package:delivery_app/utils/services/models/user_models.dart';
+import 'package:delivery_app/user_profile/model/user_models.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
   ResturantApiService _resturantApiService = Get.put(ResturantApiService());
   RxBool isloading = false.obs;
   var restaurantList = List<RestaurantRecord>.empty().obs;
-  var usersDetails = List<UsersRecord>.empty().obs;
+  var usersDetails = List<UserRecord>.empty().obs;
   var menuListrecords = List<MenuListRecord>.empty().obs;
 
   getAllRestaurantDetails() async {

@@ -8,7 +8,7 @@ class ApiProvider {
 
   Future<dynamic> apiManager(String url, dynamic body) async {
     print(
-        'apiManager function called URL : ${_appConstansConfiguration.API_URL}$url}');
+        'apiManager function called URL : ${_appConstansConfiguration.API_URL}$url');
     try {
       final response = await dio
           .post('${_appConstansConfiguration.API_URL}$url', data: body);

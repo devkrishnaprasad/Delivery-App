@@ -41,16 +41,14 @@ class _SplashScreenSlideTwoState extends State<SplashScreenSlideTwo> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-              child: Container(
-                child: Text(
-                  'Indulge in the exquisite flavors of our culinary masterpiece – a symphony of succulent grilled chicken, nestled on a bed of perfectly seasoned quinoa and adorned with a medley of vibrant, roasted vegetables.',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16.sp,
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w400),
-                ),
+              padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+              child: Text(
+                'Indulge in the exquisite flavors of our culinary masterpiece – a symphony of succulent grilled chicken, nestled on a bed of perfectly seasoned quinoa and adorned with a medley of vibrant, roasted vegetables.',
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16.sp,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w400),
               ),
             )
           ],

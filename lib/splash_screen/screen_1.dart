@@ -15,7 +15,7 @@ class _SplashScreenSlideOneState extends State<SplashScreenSlideOne> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: EdgeInsets.all(50),
+            padding: const EdgeInsets.all(50),
             child: Container(
               height: 400,
               width: double.infinity,

@@ -51,7 +51,9 @@ class DBOperations:
                                 'full_name': row[1],
                                 'email': row[2],
                                 'phone_number': row[3],
-                                'image_url': row[4]
+                                'image_url': row[4],
+                                'date_of_birth':row[5],
+                                'gender':row[6]
                             } for row in user_details
                         ],
                         "status": True,
@@ -88,6 +90,45 @@ class DBOperations:
             print(f"Error inserting user: {e}")
 
 
+    def update_user(self,user_id, full_name, email, phone_number, image_url, date_of_birth, gender):
+       
+        # print("user_id:", user_id)
+        # print("full_name:", full_name)
+        # print("email:", email)
+        # print("phone_number:", phone_number)
+        # print("image_url:", image_url)
+        # print("date_of_birth:", date_of_birth)
+        # print("gender:", gender)
+
+        try:
+            db_connect = self.create_connection()
+            if db_connect:
+                cur = db_connect.cursor()
+                update_query = """
+                    UPDATE users
+                    SET full_name = %s,
+                        email = %s,
+                        phone_number = %s,
+                        image_url = %s,
+                        date_of_birth = %s,
+                        gender = %s,
+                        modified_date_time = %s
+                    WHERE user_id = %s
+                """
+                 # Execute the update query
+                cur.execute(update_query, (full_name, email, phone_number, image_url, date_of_birth, gender,self.get_current_date_time(), user_id))
+
+                # Commit the changes
+                db_connect.commit()
+                return jsonify({"message": "User details Updated successfully."})
+        except Exception as e:
+            print(f"Error inserting user: {e}")
+            return jsonify({"message": "Request Failed.","details":e})
+            
+
+
+
+
 
     def get_restaurant_details(self, query):
         try:
@@ -108,8 +149,8 @@ class DBOperations:
                                 'restaurant_name': row[1],
                                 'restauran_rating': row[2],
                                 'restauran_contact_number': row[3],
-                                'image_url': row[5],
-                                'restaurant_description':row[4]
+                                'image_url': row[4],
+                                'restaurant_description':row[5]
                             } for row in restaurant_details
                         ],
                         "status": True,

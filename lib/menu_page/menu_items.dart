@@ -1,4 +1,3 @@
-import 'package:delivery_app/cart/cart.dart';
 import 'package:delivery_app/home/controller/home_controller.dart';
 import 'package:delivery_app/menu_page/menu_controller.dart';
 import 'package:delivery_app/menu_page/widgets/cards/menu_item_cards.dart';
@@ -7,17 +6,37 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+// ignore: must_be_immutable
 class MenuItems extends StatefulWidget {
-  const MenuItems({Key? key}) : super(key: key);
+  String restaurantId;
+  String restaurantName;
+  String restaurantDescription;
+  String restaurantRating;
+
+  MenuItems(
+      {Key? key,
+      required this.restaurantName,
+      required this.restaurantId,
+      required this.restaurantDescription,
+      required this.restaurantRating})
+      : super(key: key);
 
   @override
   State<MenuItems> createState() => _MenuItemsState();
 }
 
-MainMenuController _mainMenuController = Get.put(MainMenuController());
+MainMenuController _mainMenuController = Get.find();
 HomeController _homeController = Get.find();
 
 class _MenuItemsState extends State<MenuItems> {
+  @override
+  void dispose() {
+    _mainMenuController.carTotalPrice.value = 0;
+    _mainMenuController.cartItemCount.value = 0;
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
@@ -26,6 +45,8 @@ class _MenuItemsState extends State<MenuItems> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
+            _mainMenuController.carTotalPrice.value = 0;
+            _mainMenuController.cartItemCount.value = 0;
             Get.back();
           },
           icon: SizedBox(
@@ -77,11 +98,12 @@ class _MenuItemsState extends State<MenuItems> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     InkWell(
-                      onTap: () {
-                        Get.to(Cart());
+                      onTap: () async {
+                        await _mainMenuController.processBilling();
+                        // Get.to(const Cart());
                       },
                       child: Container(
-                        width: 150.w,
+                        width: 200.w,
                         height: 40.h,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
@@ -92,7 +114,7 @@ class _MenuItemsState extends State<MenuItems> {
                             Padding(
                               padding: EdgeInsets.fromLTRB(10.h, 0, 0, 0),
                               child: ImageIcon(
-                                AssetImage('assets/icons/cart.png'),
+                                const AssetImage('assets/icons/cart.png'),
                                 size: 25.0.dg,
                                 color: Colors.white,
                               ),
@@ -125,6 +147,18 @@ class _MenuItemsState extends State<MenuItems> {
                               ),
                             ),
                             Padding(
+                              padding: EdgeInsets.fromLTRB(5.h, 0, 0, 0),
+                              child: Text(
+                                "₹${_mainMenuController.carTotalPrice.value}",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15.sp,
+                                  fontFamily: 'ch',
+                                ),
+                              ),
+                            ),
+                            Padding(
                               padding: EdgeInsets.fromLTRB(2.h, 0, 0, 0),
                               child: ImageIcon(
                                 const AssetImage(
@@ -136,7 +170,7 @@ class _MenuItemsState extends State<MenuItems> {
                           ],
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -157,7 +191,7 @@ class _MenuItemsState extends State<MenuItems> {
                     Padding(
                       padding: EdgeInsets.fromLTRB(0.w, 0.h, 0.w, 0.h),
                       child: Text(
-                        'Meghana Foods',
+                        widget.restaurantName,
                         // 'Testing Item',
                         style: TextStyle(
                           fontSize: 30.sp,
@@ -168,7 +202,7 @@ class _MenuItemsState extends State<MenuItems> {
                     Padding(
                       padding: EdgeInsets.fromLTRB(0.w, 0.h, 0.w, 0.h),
                       child: Text(
-                        'Biryani . Andhra . North Indian',
+                        widget.restaurantDescription,
                         style: TextStyle(
                           fontSize: 12.sp,
                         ),
@@ -193,7 +227,7 @@ class _MenuItemsState extends State<MenuItems> {
                                     padding:
                                         EdgeInsets.fromLTRB(8.w, 0.h, 0.w, 0.h),
                                     child: Text(
-                                      '4.3',
+                                      widget.restaurantRating,
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -246,8 +280,11 @@ class _MenuItemsState extends State<MenuItems> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         return MenuItemCard(
+                          itemId: _homeController.menuListrecords[index].itemId,
                           itemname:
                               _homeController.menuListrecords[index].itemName,
+                          itemDesciption: _homeController
+                              .menuListrecords[index].itemDescription,
                           rating: double.parse(_homeController
                               .menuListrecords[index].itemRating),
                           itemPrice:

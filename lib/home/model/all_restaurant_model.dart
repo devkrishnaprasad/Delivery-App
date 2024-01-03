@@ -2,6 +2,8 @@
 //
 //     final Restaurants = RestaurantsFromJson(jsonString);
 
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:convert';
 
 Restaurants RestaurantsFromJson(String str) =>

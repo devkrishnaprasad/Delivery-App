@@ -1,4 +1,5 @@
 import 'package:delivery_app/home/controller/home_controller.dart';
+import 'package:delivery_app/menu_page/menu_controller.dart';
 import 'package:delivery_app/menu_page/menu_items.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,7 +26,8 @@ class RestaurantsCard extends StatefulWidget {
 }
 
 class _RestaurantsCardState extends State<RestaurantsCard> {
-  HomeController _homeController = Get.find();
+  final HomeController _homeController = Get.find();
+  final MainMenuController _mainMenuController = Get.put(MainMenuController());
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
@@ -34,7 +36,17 @@ class _RestaurantsCardState extends State<RestaurantsCard> {
       padding: EdgeInsets.fromLTRB(10.w, 0.h, 10.w, 20.h),
       child: InkWell(
         onTap: () async {
-          Get.to(const MenuItems());
+          _mainMenuController.restaurantId.value = widget.restaurantId;
+          Get.to(
+            MenuItems(
+              restaurantId: widget.restaurantId,
+              restaurantName: widget.restaurantName,
+              restaurantDescription: widget.discription,
+              restaurantRating: widget.rating,
+            ),
+            transition: Transition.fadeIn,
+            duration: const Duration(milliseconds: 700),
+          );
           await _homeController.getMenuItes(widget.restaurantId);
         },
         child: Container(
@@ -132,7 +144,7 @@ class _RestaurantsCardState extends State<RestaurantsCard> {
                                             15.h, 4.w, 0.h, 0.w),
                                         child: Row(
                                           children: [
-                                            Icon(Icons.keyboard_capslock),
+                                            const Icon(Icons.keyboard_capslock),
                                             Text(
                                               '30 - 35 Minutes',
                                               style: TextStyle(
@@ -162,19 +174,19 @@ class _RestaurantsCardState extends State<RestaurantsCard> {
                                   child: Align(
                                     alignment: Alignment.center,
                                     child: Container(
-                                      width: 50.w,
-                                      height: 30.h,
+                                      width: 40.w,
+                                      height: 20.h,
                                       decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(5.w),
                                           color: Colors.green),
                                       child: Padding(
                                         padding: EdgeInsets.fromLTRB(
-                                            13.w, 0.h, 0.w, 0.h),
+                                            10.w, 0.h, 0.w, 0.h),
                                         child: Row(
                                           children: [
                                             Text(
-                                              '4.5',
+                                              widget.rating,
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 8.sp,
