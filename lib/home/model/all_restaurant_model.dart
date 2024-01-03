@@ -1,21 +1,25 @@
+// To parse this JSON data, do
+//
+//     final Restaurants = RestaurantsFromJson(jsonString);
+
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:convert';
 
-AllResturantRecords allResturantRecordsFromJson(String str) =>
-    AllResturantRecords.fromJson(json.decode(str));
+Restaurants RestaurantsFromJson(String str) =>
+    Restaurants.fromJson(json.decode(str));
 
-String allResturantRecordsToJson(AllResturantRecords data) =>
-    json.encode(data.toJson());
+String RestaurantsToJson(Restaurants data) => json.encode(data.toJson());
 
-class AllResturantRecords {
-  Response response;
+class Restaurants {
+  RestaurantResponse response;
 
-  AllResturantRecords({
+  Restaurants({
     required this.response,
   });
 
-  factory AllResturantRecords.fromJson(Map<String, dynamic> json) =>
-      AllResturantRecords(
-        response: Response.fromJson(json["response"]),
+  factory Restaurants.fromJson(Map<String, dynamic> json) => Restaurants(
+        response: RestaurantResponse.fromJson(json["response"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -23,21 +27,22 @@ class AllResturantRecords {
       };
 }
 
-class Response {
+class RestaurantResponse {
   String msg;
-  List<Record> records;
+  List<RestaurantRecord> records;
   bool status;
 
-  Response({
+  RestaurantResponse({
     required this.msg,
     required this.records,
     required this.status,
   });
 
-  factory Response.fromJson(Map<String, dynamic> json) => Response(
+  factory RestaurantResponse.fromJson(Map<String, dynamic> json) =>
+      RestaurantResponse(
         msg: json["msg"],
-        records:
-            List<Record>.from(json["records"].map((x) => Record.fromJson(x))),
+        records: List<RestaurantRecord>.from(
+            json["records"].map((x) => RestaurantRecord.fromJson(x))),
         status: json["status"],
       );
 
@@ -48,18 +53,16 @@ class Response {
       };
 }
 
-class Record {
-  String base64Data;
-  String imageName;
+class RestaurantRecord {
+  String imageUrl;
   String restauranContactNumber;
   String restauranRating;
   String restaurantDescription;
   String restaurantId;
   String restaurantName;
 
-  Record({
-    required this.base64Data,
-    required this.imageName,
+  RestaurantRecord({
+    required this.imageUrl,
     required this.restauranContactNumber,
     required this.restauranRating,
     required this.restaurantDescription,
@@ -67,9 +70,9 @@ class Record {
     required this.restaurantName,
   });
 
-  factory Record.fromJson(Map<String, dynamic> json) => Record(
-        base64Data: json["base64_data"],
-        imageName: json["image_name"],
+  factory RestaurantRecord.fromJson(Map<String, dynamic> json) =>
+      RestaurantRecord(
+        imageUrl: json["image_url"],
         restauranContactNumber: json["restauran_contact_number"],
         restauranRating: json["restauran_rating"],
         restaurantDescription: json["restaurant_description"],
@@ -78,8 +81,7 @@ class Record {
       );
 
   Map<String, dynamic> toJson() => {
-        "base64_data": base64Data,
-        "image_name": imageName,
+        "image_url": imageUrl,
         "restauran_contact_number": restauranContactNumber,
         "restauran_rating": restauranRating,
         "restaurant_description": restaurantDescription,

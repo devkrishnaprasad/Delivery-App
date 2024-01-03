@@ -1,5 +1,7 @@
+import 'package:delivery_app/home/controller/home_controller.dart';
 import 'package:delivery_app/restaurant/restaurant_card.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class RestaurantMainPage extends StatefulWidget {
   const RestaurantMainPage({super.key});
@@ -9,6 +11,8 @@ class RestaurantMainPage extends StatefulWidget {
 }
 
 class _RestaurantMainPageState extends State<RestaurantMainPage> {
+  HomeController _homeController = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -62,11 +66,20 @@ class _RestaurantMainPageState extends State<RestaurantMainPage> {
           Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
             child: ListView.builder(
-              itemCount: 5,
+              itemCount: _homeController.restaurantList.length,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                return const RestaurantsCard();
+                return RestaurantsCard(
+                  restaurantName:
+                      _homeController.restaurantList[index].restaurantName,
+                  discription: _homeController
+                      .restaurantList[index].restaurantDescription,
+                  rating: _homeController.restaurantList[index].restauranRating,
+                  imageUrl: _homeController.restaurantList[index].imageUrl,
+                  restaurantId:
+                      _homeController.restaurantList[index].restaurantId,
+                );
               },
             ),
           ),

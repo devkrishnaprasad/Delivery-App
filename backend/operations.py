@@ -2,11 +2,21 @@ from flask import jsonify
 import psycopg2
 from dotenv import load_dotenv
 import os
+from datetime import datetime
+import pytz
 
 load_dotenv()
 
 class DBOperations:
+    def get_current_date_time(self):
 
+        utc_now = datetime.utcnow()
+        utc_timezone = pytz.timezone('UTC')
+        utc_now = utc_timezone.localize(utc_now)
+        ist_timezone = pytz.timezone('Asia/Kolkata')
+        ist_now = utc_now.astimezone(ist_timezone)
+        return ist_now.strftime("%Y-%m-%d %H:%M:%S %Z")
+    
     def create_connection(self):
         try:
             conn = psycopg2.connect(
@@ -41,7 +51,9 @@ class DBOperations:
                                 'full_name': row[1],
                                 'email': row[2],
                                 'phone_number': row[3],
-                                'image_url': row[4]
+                                'image_url': row[4],
+                                'date_of_birth':row[5],
+                                'gender':row[6]
                             } for row in user_details
                         ],
                         "status": True,
@@ -54,25 +66,69 @@ class DBOperations:
             print(f"Error retrieving user details from the database: {e}")
             return jsonify({f"Error retrieving user details from the database: {e}"})
 
-    def add_users(self, user_id, full_name, email, phone_number, image_url):
+    def add_users(self, user_id, full_name, email, phone_number,date_of_birth, gender, image_url):
         try:
             db_connect = self.create_connection()
             if db_connect:
                 cur = db_connect.cursor()
+
                 query = """
-                    INSERT INTO users (user_id, full_name, email, phone_number, image_url)
-                    VALUES (%s, %s, %s, %s, %s)
+                    INSERT INTO users (user_id, full_name, email, phone_number, image_url, modified_date_time, date_of_birth, gender)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """
-                data = (user_id, full_name, email, phone_number, image_url)
+
+                print("Modified Date Time ",self.get_current_date_time())
+                data = (user_id, full_name, email, phone_number, image_url, self.get_current_date_time(), date_of_birth, gender)
 
                 cur.execute(query, data)
                 db_connect.commit()
 
-                return jsonify({"message": "User added sccessfully."}), 200
-
                 cur.close()
+
+                return jsonify({"message": "User added successfully."}), 200
         except Exception as e:
             print(f"Error inserting user: {e}")
+
+
+    def update_user(self,user_id, full_name, email, phone_number, image_url, date_of_birth, gender):
+       
+        # print("user_id:", user_id)
+        # print("full_name:", full_name)
+        # print("email:", email)
+        # print("phone_number:", phone_number)
+        # print("image_url:", image_url)
+        # print("date_of_birth:", date_of_birth)
+        # print("gender:", gender)
+
+        try:
+            db_connect = self.create_connection()
+            if db_connect:
+                cur = db_connect.cursor()
+                update_query = """
+                    UPDATE users
+                    SET full_name = %s,
+                        email = %s,
+                        phone_number = %s,
+                        image_url = %s,
+                        date_of_birth = %s,
+                        gender = %s,
+                        modified_date_time = %s
+                    WHERE user_id = %s
+                """
+                 # Execute the update query
+                cur.execute(update_query, (full_name, email, phone_number, image_url, date_of_birth, gender,self.get_current_date_time(), user_id))
+
+                # Commit the changes
+                db_connect.commit()
+                return jsonify({"message": "User details Updated successfully."})
+        except Exception as e:
+            print(f"Error inserting user: {e}")
+            return jsonify({"message": "Request Failed.","details":e})
+            
+
+
+
+
 
     def get_restaurant_details(self, query):
         try:
@@ -113,15 +169,15 @@ class DBOperations:
             if db_connect:
                 cur = db_connect.cursor()
                 query = """
-                    INSERT INTO restaurant_details (restaurant_id, restaurant_name, restauran_rating, restauran_contact_number, image_url,restaurant_description)
-                    VALUES (%s, %s, %s, %s, %s, %s)
+                    INSERT INTO restaurant_details (restaurant_id, restaurant_name, restauran_rating, restauran_contact_number, image_url,restaurant_description,modified_date_time)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """
-                data = (restaurant_id, restaurant_name, restauran_rating, restauran_contact_number, image_url,restaurant_description)
+                data = (restaurant_id, restaurant_name, restauran_rating, restauran_contact_number, image_url,restaurant_description,self.get_current_date_time())
 
                 cur.execute(query, data)
                 db_connect.commit()
                 cur.close()
-                return jsonify({"message": "Restaurant added successfully"}), 200
+                return jsonify({"message": "Restaurant added successfully", "restaurant_id": restaurant_id}), 200
 
                 
         except Exception as e:
@@ -164,22 +220,20 @@ class DBOperations:
             return jsonify({f"Error retrieving user details from the database: {e}"})
 
     def add_restaurant_items(self, item_id,restaurant_id, item_name,item_description,veg,item_rating,item_price,image_url):
-            
             try:
                 db_connect = self.create_connection()
                 if db_connect:
                     cur = db_connect.cursor()
                     query = """
-                        INSERT INTO restaurant_menu_details (item_id,restaurant_id, item_name, item_description, veg, item_rating,item_price,image_url)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                        INSERT INTO restaurant_menu_details (item_id,restaurant_id, item_name, item_description, veg, item_rating,item_price,image_url,modified_date_time)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """
-                    data = (item_id ,restaurant_id, item_name, item_description, veg, item_rating,item_price,image_url)
+                    data = (item_id ,restaurant_id, item_name, item_description, veg, item_rating,item_price,image_url,self.get_current_date_time())
 
                     cur.execute(query, data)
                     db_connect.commit()
                     return jsonify({"message": "Menu Item added sccessfully."}), 200
 
-                    cur.close()
             except Exception as e:
                 print(f"Error inserting user: {e}")
                 

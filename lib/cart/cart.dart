@@ -30,7 +30,7 @@ class _CartState extends State<Cart> {
           ),
         ]),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Cart page'),
       ),
     );

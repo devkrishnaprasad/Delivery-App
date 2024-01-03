@@ -1,16 +1,33 @@
+import 'package:delivery_app/home/controller/home_controller.dart';
+import 'package:delivery_app/menu_page/menu_controller.dart';
 import 'package:delivery_app/menu_page/menu_items.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class RestaurantsCard extends StatefulWidget {
-  const RestaurantsCard({Key? key}) : super(key: key);
+  final String restaurantName;
+  final String discription;
+  final String imageUrl;
+  final String rating;
+  final String restaurantId;
+
+  const RestaurantsCard({
+    Key? key,
+    required this.restaurantName,
+    required this.discription,
+    required this.imageUrl,
+    required this.rating,
+    required this.restaurantId,
+  }) : super(key: key);
 
   @override
   State<RestaurantsCard> createState() => _RestaurantsCardState();
 }
 
 class _RestaurantsCardState extends State<RestaurantsCard> {
+  final HomeController _homeController = Get.find();
+  final MainMenuController _mainMenuController = Get.put(MainMenuController());
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
@@ -18,8 +35,19 @@ class _RestaurantsCardState extends State<RestaurantsCard> {
     return Padding(
       padding: EdgeInsets.fromLTRB(10.w, 0.h, 10.w, 20.h),
       child: InkWell(
-        onTap: () {
-          Get.to(const MenuItems());
+        onTap: () async {
+          _mainMenuController.restaurantId.value = widget.restaurantId;
+          Get.to(
+            MenuItems(
+              restaurantId: widget.restaurantId,
+              restaurantName: widget.restaurantName,
+              restaurantDescription: widget.discription,
+              restaurantRating: widget.rating,
+            ),
+            transition: Transition.fadeIn,
+            duration: const Duration(milliseconds: 700),
+          );
+          await _homeController.getMenuItes(widget.restaurantId);
         },
         child: Container(
           height: 195.h,
@@ -42,104 +70,147 @@ class _RestaurantsCardState extends State<RestaurantsCard> {
               Container(
                 height: 115.h,
                 width: 1.sw,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10),
                   ),
                   image: DecorationImage(
-                    image: AssetImage('assets/images/item_img_2.jpg'),
+                    image: NetworkImage(widget.imageUrl),
                     fit: BoxFit.fill,
                   ),
                 ),
               ),
-              Container(
-                height: 75.h,
-                width: 1.sw,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(10),
-                    bottomRight: Radius.circular(10),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(15.w, 10.h, 0.w, 0.h),
-                      child: Text(
-                        'Meghana Foods',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.sp, // Use ScreenUtil for font size
-                        ),
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(15.w, 0.h, 0.w, 0.h),
-                          child: Text(
-                            'Biriyani . Andhra . ₹350',
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
+              Row(
+                children: [
+                  Column(
+                    children: [
+                      Container(
+                        height: 80.h,
+                        width: 340.w, // Set the width to 1.sw
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(10),
+                            bottomRight: Radius.circular(10),
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(130.w, 5.h, 0.w, 0.h),
-                          child: Container(
-                            width: 40.w,
-                            height: 20.h,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5.w),
-                              color: Colors.green,
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.fromLTRB(10.w, 0.h, 0.w, 0.h),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    '4.5',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 8.sp,
-                                      fontWeight: FontWeight.bold,
+                        child: Row(
+                          children: [
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Container(
+                                height: 80.h,
+                                width: 220.w,
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(
+                                            15.h, 15.w, 0.h, 0.w),
+                                        child: Text(
+                                          widget.restaurantName,
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15.sp,
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                  Icon(
-                                    Icons.star,
-                                    color: Colors.white,
-                                    size: 10.sp,
-                                  ),
-                                ],
+                                    Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(
+                                            15.h, 0.w, 0.h, 0.w),
+                                        child: Text(
+                                          widget.discription,
+                                          style: TextStyle(
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(
+                                            15.h, 4.w, 0.h, 0.w),
+                                        child: Row(
+                                          children: [
+                                            const Icon(Icons.keyboard_capslock),
+                                            Text(
+                                              '30 - 35 Minutes',
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(15.w, 0.h, 0.w, 0.h),
-                      child: Row(
-                        children: [
-                          Icon(Icons.keyboard_capslock),
-                          Text(
-                            '30 - 35 Minutes',
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.red,
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: Container(
+                                  height: 80.h,
+                                  width: 120.w,
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(10),
+                                    ),
+                                  ),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Container(
+                                      width: 40.w,
+                                      height: 20.h,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5.w),
+                                          color: Colors.green),
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(
+                                            10.w, 0.h, 0.w, 0.h),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              widget.rating,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 8.sp,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Icon(
+                                              Icons.star,
+                                              color: Colors.white,
+                                              size: 10.sp,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                          ],
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              )
             ],
           ),
         ),

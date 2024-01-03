@@ -2,7 +2,7 @@ import 'package:delivery_app/cart/cart.dart';
 import 'package:delivery_app/home/controller/home_controller.dart';
 import 'package:delivery_app/order_history/all_orders.dart';
 import 'package:delivery_app/restaurant/restaurant_page.dart';
-import 'package:delivery_app/user_profile/profile.dart';
+import 'package:delivery_app/user_profile/view/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -23,8 +23,6 @@ List pages = const [
 ];
 
 class _HomePageState extends State<HomePage> {
-  int currentIndex = 0;
-
   HomeController _homeController = Get.find();
   @override
   Widget build(BuildContext context) {
@@ -35,23 +33,35 @@ class _HomePageState extends State<HomePage> {
         actions: [
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(10.h, 0.w, 15.h, 0.w),
-            child: InkWell(
-              onTap: () {
-                Get.to(const UserProfile());
-              },
-              child: CircleAvatar(
+            child: InkWell(onTap: () {
+              Get.to(
+                const UserProfile(),
+                transition: Transition.fade,
+                duration: const Duration(milliseconds: 700),
+              );
+            }, child: Obx(() {
+              return CircleAvatar(
                 backgroundColor: Colors.transparent,
                 child: SizedBox(
                   width: 60.w,
                   height: 60.h,
                   child: ClipOval(
-                    child: Image.asset(
-                      'assets/images/My_profile.jpeg',
+                    child: Image(
+                      image: _homeController.usersDetails.isEmpty
+                          ? const NetworkImage(
+                              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png")
+                          : _homeController.usersDetails[0].imageUrl == null
+                              ? const NetworkImage(
+                                  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png")
+                              : NetworkImage(
+                                  _homeController.usersDetails[0].imageUrl
+                                      .toString(),
+                                ),
                     ),
                   ),
                 ),
-              ),
-            ),
+              );
+            })),
           )
         ],
         leading: Row(
@@ -136,10 +146,10 @@ class _HomePageState extends State<HomePage> {
                   child: LoadingAnimationWidget.twistingDots(
                     leftDotColor: const Color(0xFF1A1A3F),
                     rightDotColor: const Color(0xFFEA3799),
-                    size: 200,
+                    size: 100,
                   ),
                 )
-              : RestaurantMainPage();
+              : const RestaurantMainPage();
         },
       ),
     );

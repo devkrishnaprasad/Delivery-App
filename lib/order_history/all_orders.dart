@@ -10,7 +10,7 @@ class AllOrders extends StatefulWidget {
 class _AllOrdersState extends State<AllOrders> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Text('All orders'),
       ),
