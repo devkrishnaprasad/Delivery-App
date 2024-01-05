@@ -1,5 +1,4 @@
-// ignore_for_file: no_leading_underscores_for_local_identifiers
-
+import 'package:delivery_app/billing/view/billing_view.dart';
 import 'package:delivery_app/home/controller/home_controller.dart';
 import 'package:delivery_app/home/home.dart';
 // import 'package:delivery_app/splash_screen/screen_1.dart';
@@ -26,6 +25,8 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
+
+        // home: BillingWidget(restaurantName: "Test Name"),
         home: const HomePage(),
         debugShowCheckedModeBanner: false,
       ),
@@ -35,10 +36,10 @@ class MyApp extends StatelessWidget {
 }
 
 initialSetup() async {
-  HomeController _homeController = Get.put(HomeController());
-  LocalStorage _localStorage = LocalStorage();
-  await _localStorage.write('user_id', '3ec4e406-08f8-4995-a662-9e7aa412c961');
-  var userId = await _localStorage.read('user_id');
-  await _homeController.getUserDetails(userId);
-  await _homeController.getAllRestaurantDetails();
+  HomeController homeController = Get.put(HomeController());
+  LocalStorage localStorage = LocalStorage();
+  await localStorage.write('user_id', '3ec4e406-08f8-4995-a662-9e7aa412c961');
+  var userId = await localStorage.read('user_id');
+  await homeController.getUserDetails(userId);
+  await homeController.getAllRestaurantDetails();
 }

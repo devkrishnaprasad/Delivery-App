@@ -1,3 +1,4 @@
+import 'package:delivery_app/billing/view/billing_view.dart';
 import 'package:delivery_app/home/controller/home_controller.dart';
 import 'package:delivery_app/menu_page/menu_controller.dart';
 import 'package:delivery_app/menu_page/widgets/cards/menu_item_cards.dart';
@@ -43,19 +44,27 @@ class _MenuItemsState extends State<MenuItems> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green,
+        title: Padding(
+          padding: EdgeInsets.fromLTRB(25.h, 0.w, 0.h, 0.w),
+          child: Text(
+            'Menu',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 24.sp,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
         leading: IconButton(
           onPressed: () {
             _mainMenuController.carTotalPrice.value = 0;
             _mainMenuController.cartItemCount.value = 0;
             Get.back();
           },
-          icon: SizedBox(
-            width: 20.w,
-            height: 20.h,
-            child: Image.asset(
-              'assets/icons/back_icon.png',
-              fit: BoxFit.contain,
-            ),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+            size: 40,
           ),
         ),
         actions: [
@@ -64,6 +73,7 @@ class _MenuItemsState extends State<MenuItems> {
             icon: const Icon(
               Icons.search,
               size: 30,
+              color: Colors.white,
             ),
           ),
           IconButton(
@@ -71,6 +81,7 @@ class _MenuItemsState extends State<MenuItems> {
             icon: const Icon(
               Icons.share,
               size: 25,
+              color: Colors.white,
             ),
           ),
           IconButton(
@@ -78,6 +89,7 @@ class _MenuItemsState extends State<MenuItems> {
             icon: const Icon(
               Icons.more_vert,
               size: 25,
+              color: Colors.white,
             ),
           )
         ],
@@ -100,7 +112,13 @@ class _MenuItemsState extends State<MenuItems> {
                     InkWell(
                       onTap: () async {
                         await _mainMenuController.processBilling();
-                        // Get.to(const Cart());
+                        Get.to(
+                          BillingWidget(
+                            restaurantName: widget.restaurantName,
+                          ),
+                          transition: Transition.fadeIn,
+                          duration: const Duration(milliseconds: 700),
+                        );
                       },
                       child: Container(
                         width: 200.w,
@@ -268,11 +286,8 @@ class _MenuItemsState extends State<MenuItems> {
             Obx(() {
               return _homeController.isloading.value
                   ? Center(
-                      child: LoadingAnimationWidget.twistingDots(
-                        leftDotColor: const Color(0xFF1A1A3F),
-                        rightDotColor: const Color(0xFFEA3799),
-                        size: 200,
-                      ),
+                      child: LoadingAnimationWidget.fourRotatingDots(
+                          color: Colors.green, size: 100),
                     )
                   : ListView.builder(
                       itemCount: _homeController.menuListrecords.length,
