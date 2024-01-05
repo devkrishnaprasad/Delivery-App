@@ -67,6 +67,7 @@ class _UserProfileState extends State<UserProfile> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+        backgroundColor: Colors.green,
         leading: Row(
           children: [
             IconButton(
@@ -76,13 +77,15 @@ class _UserProfileState extends State<UserProfile> {
               icon: const Icon(
                 Icons.arrow_back,
                 size: 35,
+                color: Colors.white,
               ),
             ),
             const Text(
               'Your Profile',
               style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w300,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             )
           ],

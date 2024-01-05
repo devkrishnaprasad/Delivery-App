@@ -1,4 +1,4 @@
-import 'package:delivery_app/cart/cart.dart';
+import 'package:delivery_app/cart/view/cart_view.dart';
 import 'package:delivery_app/home/controller/home_controller.dart';
 import 'package:delivery_app/order_history/all_orders.dart';
 import 'package:delivery_app/restaurant/restaurant_page.dart';
@@ -19,7 +19,7 @@ int selectedPageIndex = 0;
 List pages = const [
   RestaurantMainPage(),
   AllOrders(),
-  Cart(),
+  CartWidget(),
 ];
 
 class _HomePageState extends State<HomePage> {
@@ -30,6 +30,7 @@ class _HomePageState extends State<HomePage> {
       extendBody: true,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        backgroundColor: Colors.green,
         actions: [
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(10.h, 0.w, 15.h, 0.w),
@@ -68,11 +69,8 @@ class _HomePageState extends State<HomePage> {
           children: [
             IconButton(
               onPressed: () {},
-              icon: const Icon(
-                Icons.location_on,
-                size: 40.0,
-                color: Color.fromARGB(255, 110, 91, 91),
-              ),
+              icon: const Icon(Icons.location_on,
+                  size: 40.0, color: Colors.white),
             ),
             const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                     fontFamily: 'Bold',
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: Colors.white,
                   ),
                 ),
                 Text(
@@ -92,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                       fontFamily: '',
                       fontSize: 15,
                       fontWeight: FontWeight.w400,
-                      color: Colors.black),
+                      color: Colors.white),
                 ),
               ],
             ),
@@ -143,11 +141,8 @@ class _HomePageState extends State<HomePage> {
         () {
           return _homeController.isloading.value
               ? Center(
-                  child: LoadingAnimationWidget.twistingDots(
-                    leftDotColor: const Color(0xFF1A1A3F),
-                    rightDotColor: const Color(0xFFEA3799),
-                    size: 100,
-                  ),
+                  child: LoadingAnimationWidget.fourRotatingDots(
+                      color: Colors.green, size: 100),
                 )
               : const RestaurantMainPage();
         },
