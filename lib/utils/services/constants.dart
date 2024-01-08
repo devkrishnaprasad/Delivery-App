@@ -1,4 +1,5 @@
 class AppConstansConfiguration {
-  var API_URL = 'https://bfd0-116-75-92-73.ngrok-free.app';
-  // var API_URL = "http://127.0.0.1:4000";
+  // var API_URL =
+  //     'https://6837-2401-4900-4c66-d73f-b035-40c1-dbb7-b2e3.ngrok-free.app';
+  var API_URL = "http://127.0.0.1:4000";
 }
