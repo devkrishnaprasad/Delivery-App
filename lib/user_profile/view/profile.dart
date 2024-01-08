@@ -198,6 +198,7 @@ class _UserProfileState extends State<UserProfile> {
                   ),
                   style: TextStyle(fontSize: 12.sp),
                 ),
+            
               ),
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(10.h, 20.w, 10.h, 0.w),

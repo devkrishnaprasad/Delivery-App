@@ -24,6 +24,24 @@ class _UpiViewWidgetState extends State<UpiViewWidget> {
               ),
             ),
           ],
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(0.h, 25.w, 0.h, 0.w),
+          child: Column(
+            children: [
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: "UPI ID",
+                  contentPadding: EdgeInsets.symmetric(
+                      vertical: 12.0.w, horizontal: 10.0.h),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 1.0.w),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10.0))),
+                ),
+              ),
+            ],
+          ),
         )
       ],
     );
