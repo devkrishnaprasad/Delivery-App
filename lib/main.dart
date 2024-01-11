@@ -1,7 +1,5 @@
-import 'package:delivery_app/home/controller/home_controller.dart';
-import 'package:delivery_app/home/home.dart';
-// import 'package:delivery_app/splash_screen/screen_1.dart';
-// import 'package:delivery_app/splash_screen/screen_2.dart';
+import 'package:delivery_app/pages/home/controller/home_controller.dart';
+import 'package:delivery_app/pages/onboarding_screens/splashing_screen.dart';
 import 'package:delivery_app/utils/local_storage/local_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,8 +23,8 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
 
-        // home: BillingWidget(restaurantName: "Test Name"),
-        home: const HomePage(),
+        home: const SplashScreen(),
+        // home: const HomePage(),
         debugShowCheckedModeBanner: false,
       ),
       designSize: const Size(360, 640),
@@ -37,8 +35,8 @@ class MyApp extends StatelessWidget {
 initialSetup() async {
   HomeController homeController = Get.put(HomeController());
   LocalStorage localStorage = LocalStorage();
-  await localStorage.write('user_id', '3ec4e406-08f8-4995-a662-9e7aa412c961');
+  // await localStorage.write('user_id', '3ec4e406-08f8-4995-a662-9e7aa412c961');
   var userId = await localStorage.read('user_id');
-  await homeController.getUserDetails(userId);
+  if (userId != '') await homeController.getUserDetails(userId);
   await homeController.getAllRestaurantDetails();
 }
