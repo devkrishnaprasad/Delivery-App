@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
 initialSetup() async {
   HomeController homeController = Get.put(HomeController());
   LocalStorage localStorage = LocalStorage();
-  // await localStorage.write('user_id', '3ec4e406-08f8-4995-a662-9e7aa412c961');
+  await localStorage.write('user_id', '3ec4e406-08f8-4995-a662-9e7aa412c961');
   var userId = await localStorage.read('user_id');
   if (userId != '') await homeController.getUserDetails(userId);
   await homeController.getAllRestaurantDetails();
